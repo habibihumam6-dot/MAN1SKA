@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Panel Operator - MAN1SKA TV</title>
+  <link rel="icon" type="image/png" href="../icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="../supabase-config.js"></script>
+  <script defer src="admin.js"></script>
+</head>
+<body>
+<header class="bar"><strong>Panel Operator <span>MAN1SKA TV</span></strong><button id="logout" type="button" hidden>Keluar</button></header>
+<main>
+  <form id="login" class="card">
+    <h1>Masuk</h1>
+    <label>Email<input type="email" name="email" required autocomplete="username"></label>
+    <label>Kata sandi<input type="password" name="password" required autocomplete="current-password"></label>
+    <button class="btn">Masuk</button>
+    <p class="msg" id="login-msg" role="alert"></p>
+  </form>
+
+  <div id="panel" hidden>
+    <form id="post" class="card" autocomplete="off">
+      <h1 id="form-title">Tulis berita baru</h1>
+      <div class="row">
+        <label>Jenis<select name="jenis"><option>Berita</option><option>Vlog</option><option>Dokumentasi</option></select></label>
+        <label>Tanggal<input type="date" name="tanggal" required></label>
+      </div>
+      <label>Judul<input name="judul" required maxlength="120"></label>
+      <label>Ringkasan singkat <small>(tampil di kartu)</small><textarea name="ringkasan" rows="2" maxlength="180" required></textarea></label>
+      <label>Isi berita <small>(tekan Enter dua kali untuk paragraf baru)</small><textarea name="isi" rows="8"></textarea></label>
+      <label>Foto sampul<input type="file" name="cover" accept="image/*"></label>
+      <label>Foto dokumentasi <small>(boleh banyak sekaligus)</small><input type="file" name="foto" accept="image/*" multiple></label>
+      <label>Link Reels Instagram <small>(boleh kosong)</small><input type="url" name="ig" placeholder="https://www.instagram.com/reel/..."></label>
+      <label>Link TikTok <small>(boleh kosong)</small><input type="url" name="tiktok" placeholder="https://www.tiktok.com/..."></label>
+      <label>Link YouTube <small>(boleh kosong)</small><input type="url" name="youtube" placeholder="https://www.youtube.com/watch?v=..."></label>
+      <label class="check"><input type="checkbox" name="terbit" checked> Terbitkan sekarang (hilangkan centang untuk menyimpan sebagai draf)</label>
+      <div class="actions">
+        <button class="btn" id="save">Simpan</button>
+        <button class="btn ghost" id="cancel" type="button" hidden>Batal ubah</button>
+      </div>
+      <p class="msg" id="post-msg" role="status"></p>
+    </form>
+
+    <section class="card">
+      <h2>Daftar berita</h2>
+      <ul id="list"></ul>
+    </section>
+  </div>
+</main>
+</body>
+</html>
