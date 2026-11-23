@@ -17,6 +17,8 @@
   <link rel="stylesheet" href="portal.css">
   <script src="https://unpkg.com/feather-icons"></script>
   <script defer src="../script.js"></script>
+  <script defer src="../supabase-config.js"></script>
+  <script defer src="../berita-live.js"></script>
   <script defer src="portal.js"></script>
   <link rel="stylesheet" href="../footer.css">
 </head>
@@ -46,71 +48,10 @@
 <section class="hub">
   <div class="portal">
     <div class="portal-main">
-      <!-- Satu kartu = satu video. Ganti data-video dengan link videonya dari YouTube (boleh link watch?v=,
-           youtu.be/, atau shorts/). Gambar sampul dan tombol "Tonton di YouTube" terisi otomatis.
-           Video PERTAMA tampil besar, jadi taruh yang terbaru paling atas.
-           Selama linknya belum diisi, kartu tampil sebagai tempat kosong. -->
-      <div class="video-grid">
-        <article class="video-card" data-video="https://www.youtube.com/watch?v=GANTI_ID_VIDEO">
-          <div class="video-frame">
-            <button class="video-play" type="button" aria-label="Putar video: Judul video pertama"><img alt="" loading="lazy"><i data-feather="play"></i></button>
-          </div>
-          <div class="body">
-            <p class="meta"><span class="kind">Vlog</span><time datetime="2026-11-08">8 Nov 2026</time></p>
-            <h3>Judul video pertama</h3>
-            <a class="yt-link" href="#" target="_blank" rel="noopener">Tonton di YouTube<i data-feather="external-link"></i></a>
-          </div>
-        </article>
-        <article class="video-card" data-video="https://www.youtube.com/watch?v=GANTI_ID_VIDEO">
-          <div class="video-frame">
-            <button class="video-play" type="button" aria-label="Putar video: Judul video kedua"><img alt="" loading="lazy"><i data-feather="play"></i></button>
-          </div>
-          <div class="body">
-            <p class="meta"><span class="kind">Berita</span><time datetime="2026-11-05">5 Nov 2026</time></p>
-            <h3>Judul video kedua</h3>
-            <a class="yt-link" href="#" target="_blank" rel="noopener">Tonton di YouTube<i data-feather="external-link"></i></a>
-          </div>
-        </article>
-        <article class="video-card" data-video="https://www.youtube.com/watch?v=GANTI_ID_VIDEO">
-          <div class="video-frame">
-            <button class="video-play" type="button" aria-label="Putar video: Judul video ketiga"><img alt="" loading="lazy"><i data-feather="play"></i></button>
-          </div>
-          <div class="body">
-            <p class="meta"><span class="kind">Dokumentasi</span><time datetime="2026-11-01">1 Nov 2026</time></p>
-            <h3>Judul video ketiga</h3>
-            <a class="yt-link" href="#" target="_blank" rel="noopener">Tonton di YouTube<i data-feather="external-link"></i></a>
-          </div>
-        </article>
-        <article class="video-card" data-video="https://www.youtube.com/watch?v=GANTI_ID_VIDEO">
-          <div class="video-frame">
-            <button class="video-play" type="button" aria-label="Putar video: Judul video keempat"><img alt="" loading="lazy"><i data-feather="play"></i></button>
-          </div>
-          <div class="body">
-            <p class="meta"><span class="kind">Vlog</span><time datetime="2026-10-25">25 Okt 2026</time></p>
-            <h3>Judul video keempat</h3>
-            <a class="yt-link" href="#" target="_blank" rel="noopener">Tonton di YouTube<i data-feather="external-link"></i></a>
-          </div>
-        </article>
-        <article class="video-card" data-video="https://www.youtube.com/watch?v=GANTI_ID_VIDEO">
-          <div class="video-frame">
-            <button class="video-play" type="button" aria-label="Putar video: Judul video kelima"><img alt="" loading="lazy"><i data-feather="play"></i></button>
-          </div>
-          <div class="body">
-            <p class="meta"><span class="kind">Berita</span><time datetime="2026-10-18">18 Okt 2026</time></p>
-            <h3>Judul video kelima</h3>
-            <a class="yt-link" href="#" target="_blank" rel="noopener">Tonton di YouTube<i data-feather="external-link"></i></a>
-          </div>
-        </article>
-        <article class="video-card" data-video="https://www.youtube.com/watch?v=GANTI_ID_VIDEO">
-          <div class="video-frame">
-            <button class="video-play" type="button" aria-label="Putar video: Judul video keenam"><img alt="" loading="lazy"><i data-feather="play"></i></button>
-          </div>
-          <div class="body">
-            <p class="meta"><span class="kind">Dokumentasi</span><time datetime="2026-10-10">10 Okt 2026</time></p>
-            <h3>Judul video keenam</h3>
-            <a class="yt-link" href="#" target="_blank" rel="noopener">Tonton di YouTube<i data-feather="external-link"></i></a>
-          </div>
-        </article>
+      <!-- Kartu dibuat otomatis oleh berita-live.js dari unggahan di panel operator (admin/) yang kolom "Link YouTube"-nya diisi.
+           Sampul diambil dari YouTube. Video pertama (paling baru) tampil besar. Kosong sampai ada unggahan. -->
+      <div class="video-grid" id="video-grid">
+        <p class="empty-note">Memuat video...</p>
       </div>
     </div>
     <aside class="portal-side">
