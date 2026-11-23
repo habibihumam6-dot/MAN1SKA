@@ -17,6 +17,8 @@
   <link rel="stylesheet" href="portal.css">
   <script src="https://unpkg.com/feather-icons"></script>
   <script defer src="../script.js"></script>
+  <script defer src="../supabase-config.js"></script>
+  <script defer src="../berita-live.js"></script>
   <script defer src="portal.js"></script>
   <link rel="stylesheet" href="../footer.css">
 </head>
@@ -45,56 +47,10 @@
 <section class="hub">
   <div class="portal">
     <div class="portal-main">
-      <!-- Satu petak = satu postingan atau Reels. Taruh gambarnya (tangkapan layar atau sampul, bentuk persegi paling pas)
-           di berita/ig/, lalu ganti href dengan link postingannya (instagram.com/p/... atau instagram.com/reel/...).
-           Petak PERTAMA tampil besar, jadi taruh yang terbaru paling atas.
-           Ikon di pojok: film = Reels, image = postingan foto. Gambarnya tidak diambil otomatis dari Instagram. -->
-      <div class="ig-grid">
-        <a class="ig-tile" href="https://www.instagram.com/man1skatv/" target="_blank" rel="noopener" aria-label="Buka di Instagram: Keterangan singkat postingan 1">
-          <img src="ig/1.jpg" alt="" loading="lazy" onerror="this.style.display='none'">
-          <span class="ig-badge"><i data-feather="film"></i></span>
-          <span class="ig-cap">Keterangan singkat postingan 1</span>
-        </a>
-        <a class="ig-tile" href="https://www.instagram.com/man1skatv/" target="_blank" rel="noopener" aria-label="Buka di Instagram: Keterangan singkat postingan 2">
-          <img src="ig/2.jpg" alt="" loading="lazy" onerror="this.style.display='none'">
-          <span class="ig-badge"><i data-feather="image"></i></span>
-          <span class="ig-cap">Keterangan singkat postingan 2</span>
-        </a>
-        <a class="ig-tile" href="https://www.instagram.com/man1skatv/" target="_blank" rel="noopener" aria-label="Buka di Instagram: Keterangan singkat postingan 3">
-          <img src="ig/3.jpg" alt="" loading="lazy" onerror="this.style.display='none'">
-          <span class="ig-badge"><i data-feather="image"></i></span>
-          <span class="ig-cap">Keterangan singkat postingan 3</span>
-        </a>
-        <a class="ig-tile" href="https://www.instagram.com/man1skatv/" target="_blank" rel="noopener" aria-label="Buka di Instagram: Keterangan singkat postingan 4">
-          <img src="ig/4.jpg" alt="" loading="lazy" onerror="this.style.display='none'">
-          <span class="ig-badge"><i data-feather="film"></i></span>
-          <span class="ig-cap">Keterangan singkat postingan 4</span>
-        </a>
-        <a class="ig-tile" href="https://www.instagram.com/man1skatv/" target="_blank" rel="noopener" aria-label="Buka di Instagram: Keterangan singkat postingan 5">
-          <img src="ig/5.jpg" alt="" loading="lazy" onerror="this.style.display='none'">
-          <span class="ig-badge"><i data-feather="image"></i></span>
-          <span class="ig-cap">Keterangan singkat postingan 5</span>
-        </a>
-        <a class="ig-tile" href="https://www.instagram.com/man1skatv/" target="_blank" rel="noopener" aria-label="Buka di Instagram: Keterangan singkat postingan 6">
-          <img src="ig/6.jpg" alt="" loading="lazy" onerror="this.style.display='none'">
-          <span class="ig-badge"><i data-feather="image"></i></span>
-          <span class="ig-cap">Keterangan singkat postingan 6</span>
-        </a>
-        <a class="ig-tile" href="https://www.instagram.com/man1skatv/" target="_blank" rel="noopener" aria-label="Buka di Instagram: Keterangan singkat postingan 7">
-          <img src="ig/7.jpg" alt="" loading="lazy" onerror="this.style.display='none'">
-          <span class="ig-badge"><i data-feather="film"></i></span>
-          <span class="ig-cap">Keterangan singkat postingan 7</span>
-        </a>
-        <a class="ig-tile" href="https://www.instagram.com/man1skatv/" target="_blank" rel="noopener" aria-label="Buka di Instagram: Keterangan singkat postingan 8">
-          <img src="ig/8.jpg" alt="" loading="lazy" onerror="this.style.display='none'">
-          <span class="ig-badge"><i data-feather="image"></i></span>
-          <span class="ig-cap">Keterangan singkat postingan 8</span>
-        </a>
-        <a class="ig-tile" href="https://www.instagram.com/man1skatv/" target="_blank" rel="noopener" aria-label="Buka di Instagram: Keterangan singkat postingan 9">
-          <img src="ig/9.jpg" alt="" loading="lazy" onerror="this.style.display='none'">
-          <span class="ig-badge"><i data-feather="image"></i></span>
-          <span class="ig-cap">Keterangan singkat postingan 9</span>
-        </a>
+      <!-- Petak dibuat otomatis oleh berita-live.js dari unggahan di panel operator (admin/) yang kolom "Link Reels Instagram"-nya diisi.
+           Foto sampul unggahan jadi gambar petak. Petak pertama (paling baru) tampil besar. Kosong sampai ada unggahan. -->
+      <div class="ig-grid" id="ig-grid">
+        <p class="empty-note">Memuat postingan...</p>
       </div>
     </div>
     <aside class="portal-side">
