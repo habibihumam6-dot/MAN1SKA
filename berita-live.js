@@ -6,7 +6,8 @@
 //  - berita/baca.html         : isi satu berita atau program (alamatnya baca.html?id=...)
 //  - portal/galeri-video.html     : video dari unggahan yang kolom Link YouTube-nya diisi (#video-grid)
 //  - portal/galeri-instagram.html : petak dari unggahan yang kolom Link Reels Instagram-nya diisi (#ig-grid)
-// Jenis Berita, Vlog, dan Dokumentasi masuk ke bagian berita; jenis Program masuk ke bagian program.
+// Jenis Berita, Vlog, dan Dokumentasi masuk ke bagian berita; jenis Program masuk ke bagian program;
+// jenis Instagram dan Video hanya masuk ke galerinya masing-masing (tidak ikut tampil sebagai berita).
 // Butuh supabase-config.js dimuat lebih dulu.
 (async () => {
   const me = document.currentScript;
@@ -37,7 +38,8 @@
 
   const URUT = 'order=tanggal.desc,created_at.desc';
   const DAFTAR = 'select=id,tanggal,jenis,judul,ringkasan,cover&terbit=eq.true';
-  const BERITA = `${DAFTAR}&jenis=neq.Program&${URUT}`;
+  // Berita = semua jenis KECUALI Program (bagian Program) dan Instagram/Video (galeri). Kalau nanti ada jenis galeri baru, tambahkan di sini.
+  const BERITA = `${DAFTAR}&jenis=not.in.(Program,Instagram,Video)&${URUT}`;
   const PROGRAM = `${DAFTAR}&jenis=eq.Program&${URUT}`;
   const VIDEO = `select=id,tanggal,jenis,judul,youtube&terbit=eq.true&youtube=not.is.null&${URUT}`;
   const REELS = `select=id,tanggal,judul,ringkasan,cover,ig&terbit=eq.true&ig=not.is.null&${URUT}`;
@@ -59,8 +61,10 @@
   // (Sebab gagal yang sebenarnya ditulis di Console browser, F12.)
   const isi = (el, tugas, kartu, kosong) => tugas.then(
     (rows) => {
-      el.innerHTML = rows.length ? rows.map(kartu).join('') : `<p class="empty-note">${kosong}</p>`;
-      return rows.length;
+      // Baris yang tidak bisa dijadikan kartu (misalnya link YouTube yang salah) dilewati, supaya tidak muncul kotak kosong
+      const hasil = rows.map(kartu).filter(Boolean);
+      el.innerHTML = hasil.length ? hasil.join('') : `<p class="empty-note">${kosong}</p>`;
+      return hasil.length;
     },
     (err) => {
       console.error('Gagal memuat dari Supabase:', err.message || err);
@@ -100,7 +104,7 @@
       p.title = b.getAttribute('aria-label') || 'Video YouTube';
       p.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
       p.allowFullscreen = true;
-      b.closest('.video-aframe').replaceChildren(p);
+      b.closest('.video-frame').replaceChildren(p);
     });
   }
   const gi = $('#ig-grid');
