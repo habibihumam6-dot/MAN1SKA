@@ -268,7 +268,7 @@ form.addEventListener('submit', async (e) => {
   } catch (err) {
     const m = String(err.message || err);
     say(msg, /check constraint/i.test(m)
-      ? 'Database menolak jenis konten ini. Jalankan sekali di Supabase > SQL Editor: alter table berita drop constraint if exists berita_jenis_check;'
+      ? 'Database belum menerima jenis konten ini. Buka Supabase > SQL Editor, tempel seluruh isi file superbase-setup.sql, klik Run (cukup sekali), lalu simpan lagi.'
       : `Gagal menyimpan: ${m}`, false);
   }
   btn.disabled = false;
