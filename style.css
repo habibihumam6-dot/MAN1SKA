@@ -402,8 +402,12 @@ section h2 {
 
 /* ===== Halaman isi berita (berita/berita-N.html) ===== */
 .page-head .meta { margin-bottom: 0.6rem; font-size: 0.95rem; }
-/* Jarak antara chip tanggal (halaman program) dan ringkasan di bawahnya */
-.page-head .when { margin-bottom: 1.1rem; }
+/* Halaman isi: tanggal (chip) tepat di bawah judul; jenis berita (Berita/Vlog/...) di kirinya.
+   Ringkasan di bawahnya diberi jarak sedikit supaya tidak menempel. */
+.head-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.8rem; margin-top: 0.8rem; }
+.page-head .head-meta .when { margin-top: 0; }
+.article .page-head .lead { margin-top: 1.1rem; }
+.article-cover { padding: 0 7%; }
 .cover {
   width: 100%;
   max-width: 44rem;
@@ -425,10 +429,10 @@ section h2 {
 .watch { display: flex; flex-wrap: wrap; gap: 0.8rem; margin: 1rem 0 0 1.4rem; }
 .watch .btn { display: inline-flex; align-items: center; gap: 0.5rem; }
 
-/* Halaman isi berita/program: foto dokumentasi di kolom kanan (dibuat berita-live.js).
+/* Halaman isi berita/program: foto dokumentasi di kolom kanan, sejajar dengan gambar sampul (dibuat berita-live.js).
    Di layar 960px ke bawah kolom kanan turun ke bawah isi, seperti susunan awal. */
 @media (min-width: 961px) {
-  .article.has-side {
+  .article-body.has-side {
     display: grid;
     grid-template-columns: minmax(0, 1fr) clamp(17rem, 30%, 24rem);
     gap: 0 2.5rem;
@@ -436,9 +440,10 @@ section h2 {
     padding-inline: 7%;
   }
   /* di dalam kolom, jarak kiri-kanan sudah diatur grid di atas */
-  .article.has-side .page-head,
-  .article.has-side .detail { padding-inline: 0; }
-  .article-side { padding-top: 8.4rem; } /* sejajar dengan judul di kolom kiri */
+  .article-body.has-side .article-cover,
+  .article-body.has-side .detail { padding-inline: 0; }
+  .article-side { padding-top: 1.5rem; } /* sama dengan jarak atas gambar sampul, jadi sejajar */
+  .article-main:not(:has(.article-cover)) + .article-side { padding-top: 3.5rem; } /* tanpa sampul: sejajar judul isi */
   .article-side .detail { padding-top: 0; }
   .article-side h2 { font-size: 1.9rem; }
   .article-side .gallery { grid-template-columns: 1fr 1fr; gap: 0.6rem; max-width: none; margin: 1rem 0 0; }
