@@ -24,7 +24,24 @@
 .no-cover { aspect-ratio: 16 / 9; background: linear-gradient(135deg, var(--green-dark), var(--olive)); }
 .news-list .news-card .no-cover { aspect-ratio: auto; min-height: 8.5rem; }
 .ig-grid .empty-note, .video-grid .empty-note { grid-column: 1 / -1; }
-.ig-tile .no-cover { position: absolute; inset: 0; aspect-ratio: auto; }`;
+.ig-tile .no-cover { position: absolute; inset: 0; aspect-ratio: auto; }
+.gallery a { cursor: zoom-in; }
+.lightbox { position: fixed; inset: 0; z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 3.8rem 1rem 4.2rem; background: rgba(8, 20, 10, 0.9); }
+.lightbox[hidden], .lightbox [hidden] { display: none; }
+.lb-stage { display: flex; flex-direction: column; align-items: center; gap: 0.7rem; max-width: 100%; margin: 0; }
+.lb-stage img { display: block; width: auto; height: auto; max-width: min(calc(100vw - 2rem), 64rem); max-height: calc(100vh - 11rem); object-fit: contain; background: #000; border-radius: 0.5rem; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); }
+.lb-count { color: #fff; font: 600 0.95rem 'Barlow', sans-serif; }
+.lb-close, .lb-nav { position: absolute; display: grid; place-items: center; width: 2.8rem; height: 2.8rem; padding: 0; color: #fff; background-color: rgba(255, 255, 255, 0.16); border: 0; border-radius: 50%; cursor: pointer; transition: background-color 0.2s, color 0.2s; }
+.lb-close svg, .lb-nav svg { width: 1.4rem; height: 1.4rem; }
+.lb-close:hover, .lb-nav:hover { color: var(--ink); background-color: var(--gold); }
+.lb-close:focus-visible, .lb-nav:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.lb-close { top: 1rem; right: 1rem; }
+.lb-nav { top: 50%; margin-top: -1.4rem; }
+.lb-prev { left: 1rem; }
+.lb-next { right: 1rem; }
+@media (min-width: 701px) { .lb-stage img { max-width: min(calc(100vw - 9rem), 64rem); } }
+@media (max-width: 700px) { .lb-nav { top: auto; bottom: 1rem; margin-top: 0; } }
+@media (prefers-reduced-motion: no-preference) { .lightbox { animation: lb-masuk 0.18s ease-out; } @keyframes lb-masuk { from { opacity: 0; } } }`;
   document.head.append(gaya);
 
   const siap = typeof SUPABASE_URL !== 'undefined' && typeof SUPABASE_ANON_KEY !== 'undefined' && !String(SUPABASE_URL).includes('ISI_');
@@ -151,10 +168,86 @@
       // kecil dokumentasi turun ke bawah isi); lalu "Tonton juga" selebar halaman. Tanpa foto dokumentasi, tidak ada kolom kanan.
       const isiBox = paras ? `<section class="detail"><h2>${program ? 'Tentang program' : 'Isi berita'}</h2>${paras}</section>` : '';
       const dok = r.foto && r.foto.length
-        ? `<aside class="article-side"><section class="detail"><h2>Dokumentasi</h2><div class="gallery">${r.foto.map((u, i) => `<figure><a href="${esc(u)}" target="_blank" rel="noopener"><img src="${esc(u)}" alt="Dokumentasi ${esc(r.judul)}, foto ${i + 1}" loading="lazy"></a></figure>`).join('')}</div></section></aside>`
+        ? `<aside class="article-side"><section class="detail"><h2>Dokumentasi</h2><div class="gallery">${r.foto.map((u, i) => `<figure><a href="${esc(u)}" title="Klik untuk memperbesar"><img src="${esc(u)}" alt="Dokumentasi ${esc(r.judul)}, foto ${i + 1}" loading="lazy"></a></figure>`).join('')}</div></section></aside>`
         : '';
       box.innerHTML = `<div class="article">${kepala}<div class="article-body${dok ? ' has-side' : ''}"><div class="article-main">${sampul}${isiBox}</div>${dok}</div></div>`
         + (links ? `<section class="detail"><h2>Tonton juga</h2><div class="watch">${links}</div></section>` : '');
+      // Pop up foto dokumentasi: foto yang diklik muncul di tengah layar, tanpa pindah halaman.
+      // Tutup dengan tombol X, klik area gelap, atau tombol Esc. Foto lain: tombol panah, tombol kiri/kanan, atau geser di HP.
+      const fotos = r.foto || [];
+      if (fotos.length) {
+        let idx = 0, pemicu = null, sentuhX = null;
+        const svg = (isi) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${isi}</svg>`;
+        const lb = document.createElement('div');
+        lb.className = 'lightbox';
+        lb.hidden = true;
+        lb.setAttribute('role', 'dialog');
+        lb.setAttribute('aria-modal', 'true');
+        lb.setAttribute('aria-label', 'Foto dokumentasi');
+        lb.innerHTML = `<button type="button" class="lb-close" aria-label="Tutup">${svg('<line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>')}</button>`
+          + `<button type="button" class="lb-nav lb-prev" aria-label="Foto sebelumnya">${svg('<polyline points="15 18 9 12 15 6"></polyline>')}</button>`
+          + '<figure class="lb-stage"><img alt=""><figcaption class="lb-count"></figcaption></figure>'
+          + `<button type="button" class="lb-nav lb-next" aria-label="Foto berikutnya">${svg('<polyline points="9 18 15 12 9 6"></polyline>')}</button>`;
+        document.body.append(lb);
+
+        const gambar = lb.querySelector('img');
+        const hitung = lb.querySelector('.lb-count');
+        const tombol = [...lb.querySelectorAll('button')];
+        const [btnTutup, btnPrev, btnNext] = tombol;
+        if (fotos.length < 2) { btnPrev.hidden = true; btnNext.hidden = true; hitung.hidden = true; } // satu foto saja: tanpa panah
+
+        const tampil = (i) => {
+          idx = (i + fotos.length) % fotos.length;
+          gambar.src = fotos[idx];
+          gambar.alt = `Dokumentasi ${r.judul}, foto ${idx + 1}`;
+          hitung.textContent = `${idx + 1} / ${fotos.length}`;
+        };
+        const buka = (i, dari) => {
+          pemicu = dari;
+          tampil(i);
+          lb.hidden = false;
+          document.documentElement.style.overflow = 'hidden'; // halaman di belakang tidak ikut tergulir
+          btnTutup.focus();
+        };
+        const tutup = () => {
+          lb.hidden = true;
+          gambar.removeAttribute('src');
+          document.documentElement.style.overflow = '';
+          if (pemicu) pemicu.focus();
+        };
+
+        btnTutup.addEventListener('click', tutup);
+        btnPrev.addEventListener('click', () => tampil(idx - 1));
+        btnNext.addEventListener('click', () => tampil(idx + 1));
+        lb.addEventListener('click', (e) => { if (e.target === lb || e.target.classList.contains('lb-stage')) tutup(); });
+        lb.addEventListener('touchstart', (e) => { sentuhX = e.touches[0].clientX; }, { passive: true });
+        lb.addEventListener('touchend', (e) => {
+          if (sentuhX === null || fotos.length < 2) return;
+          const dx = e.changedTouches[0].clientX - sentuhX;
+          sentuhX = null;
+          if (Math.abs(dx) > 50) tampil(idx + (dx < 0 ? 1 : -1));
+        });
+        document.addEventListener('keydown', (e) => {
+          if (lb.hidden) return;
+          if (e.key === 'Escape') tutup();
+          else if (e.key === 'ArrowLeft' && fotos.length > 1) tampil(idx - 1);
+          else if (e.key === 'ArrowRight' && fotos.length > 1) tampil(idx + 1);
+          else if (e.key === 'Tab') { // fokus tetap berputar di dalam pop up
+            const aktif = tombol.filter((b) => !b.hidden);
+            const awal = aktif[0], akhir = aktif[aktif.length - 1];
+            if (e.shiftKey && document.activeElement === awal) { e.preventDefault(); akhir.focus(); }
+            else if (!e.shiftKey && document.activeElement === akhir) { e.preventDefault(); awal.focus(); }
+          }
+        });
+
+        box.querySelectorAll('.gallery a').forEach((a, i) => {
+          a.addEventListener('click', (e) => {
+            if (e.ctrlKey || e.metaKey || e.shiftKey) return; // Ctrl/Cmd + klik tetap boleh membuka foto di tab baru
+            e.preventDefault();
+            buka(i, a);
+          });
+        });
+      }
     })());
   }
 
