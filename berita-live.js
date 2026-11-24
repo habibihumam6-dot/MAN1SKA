@@ -137,21 +137,23 @@
           if (more) more.textContent = ' ke program';
         }
       }
-      const sampul = r.cover ? `<img class="cover" src="${esc(r.cover)}" alt="${esc(r.judul)}">` : '';
+      // Sampul dipisah dari header supaya kolom dokumentasi bisa disejajarkan dengan gambar sampul
+      const sampul = r.cover ? `<div class="article-cover"><img class="cover" src="${esc(r.cover)}" alt="${esc(r.judul)}"></div>` : '';
+      const tanggal = `<p class="when"><i data-feather="calendar"></i><time datetime="${esc(r.tanggal)}">${tgl(r.tanggal, true)}</time></p>`;
       const kepala = program
-        ? `<header class="page-head"><h1>${esc(r.judul)}</h1><p class="when"><i data-feather="calendar"></i><time datetime="${esc(r.tanggal)}">${tgl(r.tanggal, true)}</time></p><p class="lead">${esc(r.ringkasan)}</p>${sampul}</header>`
-        : `<header class="page-head"><p class="meta"><span class="kind">${esc(r.jenis)}</span><time datetime="${esc(r.tanggal)}">${tgl(r.tanggal)}</time></p><h1>${esc(r.judul)}</h1><p class="lead">${esc(r.ringkasan)}</p>${sampul}</header>`;
+        ? `<header class="page-head"><h1>${esc(r.judul)}</h1>${tanggal}<p class="lead">${esc(r.ringkasan)}</p></header>`
+        : `<header class="page-head"><h1>${esc(r.judul)}</h1><div class="head-meta"><span class="kind">${esc(r.jenis)}</span>${tanggal}</div><p class="lead">${esc(r.ringkasan)}</p></header>`;
       const paras = (r.isi || '').split(/\n\s*\n/).filter(Boolean).map((p) => `<p>${esc(p).replace(/\n/g, '<br>')}</p>`).join('');
       const links = [['ig', 'instagram', 'Reels Instagram'], ['tiktok', 'video', 'Video TikTok'], ['youtube', 'youtube', 'YouTube']]
         .filter(([k]) => /^https?:\/\//i.test(r[k] || ''))
         .map(([k, i, l]) => `<a class="btn" href="${esc(r[k])}" target="_blank" rel="noopener"><i data-feather="${i}"></i>${l}</a>`).join('');
-      // Susunan: [judul + isi] di kiri, [dokumentasi] di kanan (layar lebar; di layar kecil turun ke bawah isi),
-      // lalu "Tonton juga" selebar halaman. Tanpa foto dokumentasi, isi tampil seperti biasa tanpa kolom kanan.
+      // Susunan: judul di atas; di bawahnya [sampul + isi] di kiri dan [dokumentasi] di kanan (layar lebar; di layar
+      // kecil dokumentasi turun ke bawah isi); lalu "Tonton juga" selebar halaman. Tanpa foto dokumentasi, tidak ada kolom kanan.
       const isiBox = paras ? `<section class="detail"><h2>${program ? 'Tentang program' : 'Isi berita'}</h2>${paras}</section>` : '';
       const dok = r.foto && r.foto.length
         ? `<aside class="article-side"><section class="detail"><h2>Dokumentasi</h2><div class="gallery">${r.foto.map((u, i) => `<figure><a href="${esc(u)}" target="_blank" rel="noopener"><img src="${esc(u)}" alt="Dokumentasi ${esc(r.judul)}, foto ${i + 1}" loading="lazy"></a></figure>`).join('')}</div></section></aside>`
         : '';
-      box.innerHTML = `<div class="article${dok ? ' has-side' : ''}"><div class="article-main">${kepala}${isiBox}</div>${dok}</div>`
+      box.innerHTML = `<div class="article">${kepala}<div class="article-body${dok ? ' has-side' : ''}"><div class="article-main">${sampul}${isiBox}</div>${dok}</div></div>`
         + (links ? `<section class="detail"><h2>Tonton juga</h2><div class="watch">${links}</div></section>` : '');
     })());
   }
