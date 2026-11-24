@@ -402,6 +402,8 @@ section h2 {
 
 /* ===== Halaman isi berita (berita/berita-N.html) ===== */
 .page-head .meta { margin-bottom: 0.6rem; font-size: 0.95rem; }
+/* Jarak antara chip tanggal (halaman program) dan ringkasan di bawahnya */
+.page-head .when { margin-bottom: 1.1rem; }
 .cover {
   width: 100%;
   max-width: 44rem;
@@ -422,6 +424,26 @@ section h2 {
 .gallery figcaption { margin-top: 0.4rem; font-size: 0.9rem; color: var(--muted); }
 .watch { display: flex; flex-wrap: wrap; gap: 0.8rem; margin: 1rem 0 0 1.4rem; }
 .watch .btn { display: inline-flex; align-items: center; gap: 0.5rem; }
+
+/* Halaman isi berita/program: foto dokumentasi di kolom kanan (dibuat berita-live.js).
+   Di layar 960px ke bawah kolom kanan turun ke bawah isi, seperti susunan awal. */
+@media (min-width: 961px) {
+  .article.has-side {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(17rem, 30%, 24rem);
+    gap: 0 2.5rem;
+    align-items: start;
+    padding-inline: 7%;
+  }
+  /* di dalam kolom, jarak kiri-kanan sudah diatur grid di atas */
+  .article.has-side .page-head,
+  .article.has-side .detail { padding-inline: 0; }
+  .article-side { padding-top: 8.4rem; } /* sejajar dengan judul di kolom kiri */
+  .article-side .detail { padding-top: 0; }
+  .article-side h2 { font-size: 1.9rem; }
+  .article-side .gallery { grid-template-columns: 1fr 1fr; gap: 0.6rem; max-width: none; margin: 1rem 0 0; }
+  .article-side .gallery figure:first-child { grid-column: 1 / -1; } /* foto pertama tampil lebar */
+}
 
 /* Kanan atas header Berita: tombol "Berita selengkapnya" + tombol geser, dengan keterangan di bawahnya */
 .news-side { display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem; }
