@@ -145,9 +145,13 @@
       const links = [['ig', 'instagram', 'Reels Instagram'], ['tiktok', 'video', 'Video TikTok'], ['youtube', 'youtube', 'YouTube']]
         .filter(([k]) => /^https?:\/\//i.test(r[k] || ''))
         .map(([k, i, l]) => `<a class="btn" href="${esc(r[k])}" target="_blank" rel="noopener"><i data-feather="${i}"></i>${l}</a>`).join('');
-      box.innerHTML = kepala
-        + (paras ? `<section class="detail"><h2>${program ? 'Tentang program' : 'Isi berita'}</h2>${paras}</section>` : '')
-        + (r.foto && r.foto.length ? `<section class="detail"><h2>Dokumentasi</h2><div class="gallery">${r.foto.map((u, i) => `<figure><a href="${esc(u)}" target="_blank" rel="noopener"><img src="${esc(u)}" alt="Dokumentasi ${esc(r.judul)}, foto ${i + 1}" loading="lazy"></a></figure>`).join('')}</div></section>` : '')
+      // Susunan: [judul + isi] di kiri, [dokumentasi] di kanan (layar lebar; di layar kecil turun ke bawah isi),
+      // lalu "Tonton juga" selebar halaman. Tanpa foto dokumentasi, isi tampil seperti biasa tanpa kolom kanan.
+      const isiBox = paras ? `<section class="detail"><h2>${program ? 'Tentang program' : 'Isi berita'}</h2>${paras}</section>` : '';
+      const dok = r.foto && r.foto.length
+        ? `<aside class="article-side"><section class="detail"><h2>Dokumentasi</h2><div class="gallery">${r.foto.map((u, i) => `<figure><a href="${esc(u)}" target="_blank" rel="noopener"><img src="${esc(u)}" alt="Dokumentasi ${esc(r.judul)}, foto ${i + 1}" loading="lazy"></a></figure>`).join('')}</div></section></aside>`
+        : '';
+      box.innerHTML = `<div class="article${dok ? ' has-side' : ''}"><div class="article-main">${kepala}${isiBox}</div>${dok}</div>`
         + (links ? `<section class="detail"><h2>Tonton juga</h2><div class="watch">${links}</div></section>` : '');
     })());
   }
