@@ -651,6 +651,11 @@ section h2 {
   align-items: flex-start;
   justify-content: center;
   padding: 1.5rem 2rem 1.5rem 0.5rem;
+  /* Judul dan deskripsi yang berupa satu kata panjang tanpa spasi dipotong dan turun ke baris berikutnya,
+     supaya tidak tembus batas kartu. Teks biasa tetap turun di spasi seperti biasa. */
+  min-width: 0;
+  overflow-wrap: break-word; /* cadangan untuk browser lama */
+  overflow-wrap: anywhere;
 }
 .program-body h3 {
   font-size: clamp(1.8rem, 3.5vw, 2.4rem);
