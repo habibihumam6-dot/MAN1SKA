@@ -90,114 +90,20 @@
       <p class="news-note">Baca semua berita dan arsip terdahulu</p>
     </div>
   </div>
-  <!-- Satu kartu = satu berita. Salin blok news-card untuk menambah; gambar sampul di berita/img/. -->
+  <!-- Kartu berita dibuat otomatis oleh berita-live.js dari berita yang diunggah lewat panel operator (admin/).
+       Tidak perlu menyalin blok HTML lagi: kosong di sini, terisi setelah ada unggahan. -->
   <div class="news-track" id="news-track" tabindex="0" aria-label="Daftar berita">
-      <a class="news-card" href="berita/berita-1.html">
-        <img src="gambar-berita/Upacara.jpg" alt="">
-        <div class="body">
-          <p class="meta"><span class="kind">Berita</span><time datetime="2026-11-10">10 Nov 2026</time></p>
-          <h3>Upacara Hari Pahlawan</h3>
-          <p class="desc">Pelaksanaan upacara memperingati Hari Pahlawan di MAN 1 Surakarta</p>
-        </div>
-      </a>
-      <a class="news-card" href="berita/berita-2.html">
-        <img src="berita/img/2.jpg" alt="">
-        <div class="body">
-          <p class="meta"><span class="kind">Vlog</span><time datetime="2026-11-08">8 Nov 2026</time></p>
-          <h3>Judul vlog pertama</h3>
-          <p class="desc">Tulis ringkasan singkat di sini, cukup satu sampai dua kalimat supaya kartu tetap rapi.</p>
-        </div>
-      </a>
-      <a class="news-card" href="berita/berita-3.html">
-        <img src="berita/img/3.jpg" alt="">
-        <div class="body">
-          <p class="meta"><span class="kind">Dokumentasi</span><time datetime="2026-11-02">2 Nov 2026</time></p>
-          <h3>Judul dokumentasi pertama</h3>
-          <p class="desc">Tulis ringkasan singkat di sini, cukup satu sampai dua kalimat supaya kartu tetap rapi.</p>
-        </div>
-      </a>
-      <a class="news-card" href="berita/berita-4.html">
-        <img src="berita/img/4.jpg" alt="">
-        <div class="body">
-          <p class="meta"><span class="kind">Berita</span><time datetime="2026-10-27">27 Okt 2026</time></p>
-          <h3>Judul berita kedua</h3>
-          <p class="desc">Tulis ringkasan singkat di sini, cukup satu sampai dua kalimat supaya kartu tetap rapi.</p>
-        </div>
-      </a>
-      <a class="news-card" href="berita/berita-5.html">
-        <img src="berita/img/5.jpg" alt="">
-        <div class="body">
-          <p class="meta"><span class="kind">Vlog</span><time datetime="2026-10-20">20 Okt 2026</time></p>
-          <h3>Judul vlog kedua</h3>
-          <p class="desc">Tulis ringkasan singkat di sini, cukup satu sampai dua kalimat supaya kartu tetap rapi.</p>
-        </div>
-      </a>
+    <p class="empty-note">Memuat berita...</p>
   </div>
 </section>
 
 <section class="program" id="program">
   <h2>Program kami</h2>
   <p class="lead">Acara dan kegiatan yang dikerjakan kru MAN1SKA TV, lengkap dengan tanggal pelaksanaannya. Klik salah satu program untuk melihat penjelasan dan dokumentasinya.</p>
-  <!-- Satu kartu = satu program. Salin blok program-card untuk menambah; gambar kartu di program/img/.
-       Yang tampil maksimal 3 kartu, sisanya bisa digulir di dalam kotak (diatur otomatis oleh script.js).
-       Tiap kartu menuju halaman sendiri: program/program-N.html (salin salah satunya, lalu isi).
-       Tanggal boleh diganti teks bebas (misal "Setiap Jumat"), cukup hapus atribut datetime-nya. -->
+  <!-- Kartu program dibuat otomatis oleh berita-live.js dari unggahan berjenis "Program" di panel operator (admin/).
+       Yang tampil maksimal 3 kartu, sisanya digulir di dalam kotak (diatur otomatis oleh script.js). -->
   <div class="program-list" id="program-list" tabindex="0" role="region" aria-label="Daftar program">
-    <a class="program-card" href="program/program-1.html">
-      <div class="program-img"><img src="gambar-program/recest.jpg" alt=""></div>
-      <div class="program-body">
-        <h3>Reorganisasi dan <i>Capacity Building</i></h3>
-        <p>Perombakan penuh organisasi diteruskan dengan pembekalan anggota dengan ilmu-ilmu jurnalistik, <i>photography</i>, dan <i>videography</i>.</p>
-        <div class="program-foot">
-          <p class="when"><i data-feather="calendar"></i><time datetime="2026-11-14">14 November 2026</time></p>
-          <span class="more">Selengkapnya<i data-feather="chevron-right"></i></span>
-        </div>
-      </div>
-    </a>
-    <a class="program-card" href="program/program-2.html">
-      <div class="program-img"><img src="program/img/2.jpg" alt=""></div>
-      <div class="program-body">
-        <h3>Nama program kedua</h3>
-        <p>Tulis penjelasan singkat program di sini, cukup satu sampai tiga kalimat supaya kartu tetap rapi.</p>
-        <div class="program-foot">
-          <p class="when"><i data-feather="calendar"></i><time datetime="2026-11-21">21 November 2026</time></p>
-          <span class="more">Selengkapnya<i data-feather="chevron-right"></i></span>
-        </div>
-      </div>
-    </a>
-    <a class="program-card" href="program/program-3.html">
-      <div class="program-img"><img src="program/img/3.jpg" alt=""></div>
-      <div class="program-body">
-        <h3>Nama program ketiga</h3>
-        <p>Tulis penjelasan singkat program di sini, cukup satu sampai tiga kalimat supaya kartu tetap rapi.</p>
-        <div class="program-foot">
-          <p class="when"><i data-feather="calendar"></i><time datetime="2026-12-05">5 Desember 2026</time></p>
-          <span class="more">Selengkapnya<i data-feather="chevron-right"></i></span>
-        </div>
-      </div>
-    </a>
-    <a class="program-card" href="program/program-4.html">
-      <div class="program-img"><img src="program/img/4.jpg" alt=""></div>
-      <div class="program-body">
-        <h3>Nama program keempat</h3>
-        <p>Tulis penjelasan singkat program di sini, cukup satu sampai tiga kalimat supaya kartu tetap rapi.</p>
-        <div class="program-foot">
-          <p class="when"><i data-feather="calendar"></i><time datetime="2026-12-12">12 Desember 2026</time></p>
-          <span class="more">Selengkapnya<i data-feather="chevron-right"></i></span>
-        </div>
-      </div>
-    </a>
-    <a class="program-card" href="program/program-5.html">
-      <div class="program-img"><img src="program/img/5.jpg" alt=""></div>
-      <div class="program-body">
-        <h3>Nama program kelima</h3>
-        <p>Tulis penjelasan singkat program di sini, cukup satu sampai tiga kalimat supaya kartu tetap rapi.</p>
-        <div class="program-foot">
-          <p class="when"><i data-feather="calendar"></i><time datetime="2026-12-19">19 Desember 2026</time></p>
-          <span class="more">Selengkapnya<i data-feather="chevron-right"></i></span>
-        </div>
-      </div>
-    </a>
+    <p class="empty-note">Memuat program...</p>
   </div>
   <p class="program-hint"><i data-feather="chevrons-down"></i>Gulir daftar untuk melihat program lainnya</p>
 </section>
