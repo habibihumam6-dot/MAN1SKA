@@ -203,7 +203,7 @@
   btn.setAttribute('aria-label', 'Cari');
   btn.setAttribute('aria-expanded', 'false');
   btn.title = 'Cari (tekan /)';
-  btn.innerHTML = ICON;
+  btn.innerHTML = ICON; // hanya kaca pembesar; panel ditutup dengan Esc, klik latar redup, atau klik ikon ini lagi
   const burger = document.querySelector('#hamburger-menu');
   const anchor = burger || navbar.querySelector('.back-btn');
   if (anchor) anchor.before(btn); else navbar.append(btn);
@@ -265,8 +265,22 @@
     if (menu) menu.classList.remove('active');
     if (burger) burger.setAttribute('aria-expanded', 'false');
   };
+  // Menutup panel: animasi keluar dulu (kelas .is-closing), baru disembunyikan. Angka 200 (ms) sedikit di atas
+  // lama animasi keluar di search.css (0.18s).
+  let menutup = 0;
+  const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const selesaiTutup = () => {
+    clearTimeout(menutup);
+    menutup = 0;
+    panel.hidden = true;
+    backdrop.hidden = true;
+    panel.classList.remove('is-closing');
+    backdrop.classList.remove('is-closing');
+  };
+  const isOpen = () => !panel.hidden && !menutup;
   const open = () => {
     closeMenu(); // menu HP dan pencarian tidak dibuka bersamaan
+    if (menutup) selesaiTutup(); // dibuka lagi saat animasi tutup masih jalan
     panel.hidden = false;
     backdrop.hidden = false;
     btn.setAttribute('aria-expanded', 'true');
@@ -276,12 +290,15 @@
     config(); // dan menyiapkan sambungan ke Supabase
   };
   const close = () => {
-    panel.hidden = true;
-    backdrop.hidden = true;
     btn.setAttribute('aria-expanded', 'false');
+    if (panel.hidden || menutup) return;
+    if (reduceMotion()) { selesaiTutup(); return; }
+    panel.classList.add('is-closing');
+    backdrop.classList.add('is-closing');
+    menutup = setTimeout(selesaiTutup, 200);
   };
 
-  btn.addEventListener('click', () => (panel.hidden ? open() : close()));
+  btn.addEventListener('click', () => (isOpen() ? close() : open()));
   backdrop.addEventListener('click', close);
   if (burger) burger.addEventListener('click', close);
 
