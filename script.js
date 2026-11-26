@@ -151,12 +151,17 @@ if (contactForm) {
 }
 
 // ===== Berita: tombol geser untuk kartu =====
+// Kartunya dibuat belakangan oleh berita-live.js, jadi lebar kartu dicek saat tombol diklik (bukan saat halaman dibuka).
 const newsTrack = document.querySelector('#news-track');
-const newsCard = newsTrack && newsTrack.querySelector('.news-card');
-if (newsCard) {
-  const step = () => newsCard.getBoundingClientRect().width + 20;
-  document.querySelector('#news-prev').addEventListener('click', () => newsTrack.scrollBy({ left: -step() }));
-  document.querySelector('#news-next').addEventListener('click', () => newsTrack.scrollBy({ left: step() }));
+if (newsTrack) {
+  const step = () => {
+    const card = newsTrack.querySelector('.news-card');
+    return (card ? card.getBoundingClientRect().width : 0) + 20;
+  };
+  const prev = document.querySelector('#news-prev');
+  const next = document.querySelector('#news-next');
+  if (prev) prev.addEventListener('click', () => newsTrack.scrollBy({ left: -step() }));
+  if (next) next.addEventListener('click', () => newsTrack.scrollBy({ left: step() }));
 }
 
 // ===== Program: tampil maksimal 3 kartu, sisanya digulir di dalam kotak =====
@@ -178,7 +183,10 @@ if (programList) {
   fitProgram();
   // Hitung ulang kalau ukuran kartu berubah (layar diputar, font selesai dimuat, dll.)
   const watcher = new ResizeObserver(fitProgram);
-  programList.querySelectorAll('.program-card').forEach((card) => watcher.observe(card));
+  const watchCards = () => programList.querySelectorAll('.program-card').forEach((card) => watcher.observe(card));
+  watchCards();
+  // Kartu program dibuat belakangan oleh berita-live.js (dari data panel operator): hitung ulang saat kartunya muncul
+  new MutationObserver(() => { watchCards(); fitProgram(); }).observe(programList, { childList: true });
 }
 
 
@@ -280,3 +288,91 @@ if (newsGrid) {
     newsGrid.before(bar);
   }
 }
+
+// ===== Animasi masuk (pop) =====
+// Kartu berita, kartu program, baris divisi, dan logo Tentang kami muncul sekali saat pertama terlihat di layar.
+// Kartu berita dan program dibuat belakangan oleh berita-live.js, jadi wadahnya dipantau supaya kartu baru ikut dipasang.
+// Dilewati kalau pengguna mematikan animasi di perangkatnya. Ubah 0.08 (detik) untuk jeda antar kartu.
+if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  const popSel = '#news-track .news-card, #program-list .program-card, .crew .role-row, .about-img img';
+  const armed = new WeakSet();
+  const popIO = new IntersectionObserver((entries) => {
+    let n = 0;
+    entries.filter((en) => en.isIntersecting).forEach((en) => {
+      const el = en.target;
+      popIO.unobserve(el);
+      el.style.setProperty('--d', `${Math.min(n++, 5) * 0.08}s`);
+      el.classList.add('in');
+      // Setelah selesai, kelasnya dilepas supaya gaya hover biasa kembali bekerja
+      setTimeout(() => { el.classList.remove('pop', 'in'); el.style.removeProperty('--d'); }, 1300);
+    });
+  }, { threshold: 0.15 });
+  const armPop = () => document.querySelectorAll(popSel).forEach((el) => {
+    if (armed.has(el)) return;
+    armed.add(el);
+    el.classList.add('pop');
+    popIO.observe(el);
+  });
+  armPop();
+  ['#news-track', '#program-list'].forEach((s) => {
+    const box = document.querySelector(s);
+    if (box) new MutationObserver(armPop).observe(box, { childList: true });
+  });
+}
+
+// ===== Animasi masuk: slogan dan batang merah judul =====
+// Slogan "Berita ... Cerita" tersapu masuk, dan batang merah di judul tiap bagian memanjang, sekali saat terlihat.
+if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  const onceIO = new IntersectionObserver((entries) => entries.forEach((en) => {
+    if (!en.isIntersecting) return;
+    en.target.classList.add('in');
+    onceIO.unobserve(en.target);
+  }), { threshold: 0.6 });
+  const slogan = document.querySelector('.slogan');
+  if (slogan) { slogan.classList.add('sweep'); onceIO.observe(slogan); }
+  document.querySelectorAll('section h2').forEach((h) => { h.classList.add('grow'); onceIO.observe(h); });
+}
+
+// ===== Seret dengan mouse: kartu berita (kiri-kanan) dan kartu program (atas-bawah) =====
+// Hanya untuk mouse; di layar sentuh sudah ada geser bawaan. Klik biasa tetap membuka kartu,
+// hanya klik yang berakhir sebagai seretan (lebih dari 6px) yang dibatalkan. Gulir roda mouse tidak diubah.
+const enableDragScroll = (el, axis) => {
+  if (!el) return;
+  const horiz = axis === 'x';
+  let startPos = 0, startScroll = 0, down = false, moved = false;
+  const canScroll = () => (horiz ? el.scrollWidth > el.clientWidth + 1 : el.scrollHeight > el.clientHeight + 1);
+  el.addEventListener('pointerdown', (e) => {
+    if (e.pointerType !== 'mouse' || e.button !== 0 || !canScroll()) return;
+    // Menekan batang gulir bawaan dibiarkan bekerja sendiri
+    const r = el.getBoundingClientRect();
+    if (horiz ? e.clientY - r.top > el.clientHeight : e.clientX - r.left > el.clientWidth) return;
+    down = true;
+    moved = false;
+    startPos = horiz ? e.clientX : e.clientY;
+    startScroll = horiz ? el.scrollLeft : el.scrollTop;
+  });
+  window.addEventListener('pointermove', (e) => {
+    if (!down) return;
+    const d = (horiz ? e.clientX : e.clientY) - startPos;
+    if (!moved) {
+      if (Math.abs(d) < 6) return;
+      moved = true;
+      el.classList.add('dragging');
+      getSelection().removeAllRanges();
+    }
+    if (horiz) el.scrollLeft = startScroll - d;
+    else el.scrollTop = startScroll - d;
+  });
+  const end = () => {
+    if (!down) return;
+    down = false;
+    el.classList.remove('dragging'); // snap aktif lagi, kartu berhenti pas di posisinya
+    if (moved) setTimeout(() => { moved = false; }, 0);
+  };
+  window.addEventListener('pointerup', end);
+  window.addEventListener('pointercancel', end);
+  el.addEventListener('click', (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); } }, true);
+  el.addEventListener('dragstart', (e) => e.preventDefault()); // cegah seret bawaan browser untuk gambar dan link
+};
+enableDragScroll(document.querySelector('#news-track'), 'x');
+enableDragScroll(document.querySelector('#program-list'), 'y');
