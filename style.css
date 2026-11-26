@@ -10,6 +10,9 @@
   --ink: #14261a;   /* teks utama */
   --muted: #4b5d4f; /* teks sekunder */
   --head: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --radius: 0.75rem;                                    /* sudut kartu */
+  --shadow: 0 1px 2px rgba(15, 60, 20, 0.06), 0 4px 14px rgba(15, 60, 20, 0.07);       /* kartu diam */
+  --shadow-up: 0 2px 4px rgba(15, 60, 20, 0.08), 0 14px 30px rgba(15, 60, 20, 0.16);   /* kartu disorot */
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -23,12 +26,14 @@ body {
   line-height: 1.6;
   color: var(--ink);
   background-color: var(--bg);
+  -webkit-font-smoothing: antialiased;
 }
 
 img { display: block; max-width: 100%; }
 a { color: inherit; text-decoration: none; }
 :focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
-h1, h2, h3 { font-family: var(--head); line-height: 1.05; }
+h1, h2, h3 { font-family: var(--head); line-height: 1.05; text-wrap: balance; }
+p { text-wrap: pretty; }
 
 /* Tombol */
 .btn {
@@ -38,14 +43,16 @@ h1, h2, h3 { font-family: var(--head); line-height: 1.05; }
   color: #fff;
   background-color: var(--green);
   border: 0;
-  border-radius: 0.4rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 6px rgba(15, 90, 22, 0.28);
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, box-shadow 0.2s, transform 0.2s;
 }
-.btn:hover { background-color: var(--green-dark); }
+.btn:hover { background-color: var(--green-dark); box-shadow: 0 4px 12px rgba(15, 90, 22, 0.32); }
+.btn:active { transform: translateY(1px); box-shadow: 0 1px 3px rgba(15, 90, 22, 0.3); }
 .btn:disabled { opacity: 0.6; cursor: wait; }
-.btn.gold { color: var(--ink); background-color: var(--gold); }
-.btn.gold:hover { background-color: #ffd04d; }
+.btn.gold { color: var(--ink); background-color: var(--gold); box-shadow: 0 2px 6px rgba(150, 100, 0, 0.3); }
+.btn.gold:hover { background-color: #ffd04d; box-shadow: 0 4px 12px rgba(150, 100, 0, 0.34); }
 /* Tombol dengan ikon di samping tulisan */
 .btn.with-icon { display: inline-flex; align-items: center; gap: 0.5rem; }
 .btn.with-icon svg { flex: none; width: 1.2em; height: 1.2em; transition: transform 0.2s; }
@@ -92,8 +99,11 @@ h1, h2, h3 { font-family: var(--head); line-height: 1.05; }
   justify-content: space-between;
   align-items: center;
   padding: 0.8rem 7%;
-  background-color: rgba(255, 255, 255, 0.94);
+  background-color: rgba(255, 255, 255, 0.88);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--line);
+  box-shadow: 0 4px 18px rgba(15, 60, 20, 0.06);
 }
 
 /* Logo gambar (logo.png) */
@@ -245,12 +255,20 @@ section h2 {
   gap: 2rem;
   margin-top: 2rem;
 }
-.about-img { flex: 1 1 22rem; }
+.about-img {
+  flex: 1 1 22rem;
+  padding: 2.4rem 1.6rem;
+  background: radial-gradient(circle at 25% 15%, rgba(242, 184, 36, 0.2), transparent 55%), var(--card);
+  border: 1px solid var(--line);
+  border-bottom: 0.3rem solid var(--gold);
+  border-radius: 1rem;
+  box-shadow: var(--shadow);
+}
 .about-img img {
   width: 100%;
   max-width: 34rem;
   margin: 0 auto;
-  filter: drop-shadow(0 0.5rem 1rem rgba(20, 38, 26, 0.25));
+  filter: drop-shadow(0 0.4rem 0.8rem rgba(20, 38, 26, 0.18));
 }
 .about-text { flex: 1 1 24rem; max-width: 36rem; }
 .about-text h3 {
@@ -290,13 +308,16 @@ section h2 {
   align-items: center;
   padding: 1.5rem 0;
   border-top: 1px solid var(--line);
+  transition: background-color 0.25s;
 }
 .role-row h3 {
   font-size: clamp(2rem, 4vw, 2.8rem);
   font-weight: 700;
-  transition: color 0.2s;
+  transition: color 0.2s, transform 0.25s;
 }
-.role-row:hover h3 { color: var(--green); }
+/* disorot: tirai emas tipis menyapu dari kiri, nama divisi bergeser sedikit (seperti grafis TV) */
+.role-row:hover { background: linear-gradient(90deg, rgba(242, 184, 36, 0.16), rgba(242, 184, 36, 0) 70%); }
+.role-row:hover h3 { color: var(--green); transform: translateX(0.5rem); }
 .role-row p { max-width: 36rem; color: var(--muted); }
 .role-row .more {
   display: inline-flex;
@@ -341,6 +362,7 @@ section h2 {
 
 .page-head { padding: 8rem 7% 0; }
 .page-head h1 { font-size: clamp(2.6rem, 7vw, 4.5rem); font-weight: 800; }
+.page-head .lead { max-width: 40rem; font-size: 1.125rem; }
 .detail { padding-top: 3.5rem; }
 .detail p,
 .detail ul { max-width: 40rem; margin-left: 1.4rem; color: var(--ink); }
@@ -367,7 +389,7 @@ section h2 {
   display: flex;
   gap: 1.2rem;
   margin: 2rem -0.4rem 0;
-  padding: 0.5rem 0.4rem 1rem; /* ruang untuk kartu yang naik saat disorot */
+  padding: 0.5rem 0.4rem 1rem; /* ruang untuk kartu yang membesar saat disorot */
   scroll-padding-inline: 0.4rem;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
@@ -375,19 +397,34 @@ section h2 {
   scrollbar-color: var(--line) transparent;
 }
 .news-card {
+  position: relative;
   flex: 0 0 min(19rem, 80%);
   scroll-snap-align: start;
   background-color: var(--card);
   border: 1px solid var(--line);
-  border-radius: 0.4rem;
+  border-radius: var(--radius);
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(20, 38, 26, 0.08);
-  transition: border-color 0.2s, transform 0.2s;
+  box-shadow: var(--shadow);
+  transition: border-color 0.2s, transform 0.25s ease, box-shadow 0.25s;
 }
-.news-card:hover { border-color: var(--gold); transform: translateY(-0.25rem); }
+/* Seluruh kartu membesar sedikit saat disorot. Ruang di sekitar jalur geser (padding .news-track) cukup untuk ini */
+.news-card:hover { z-index: 1; border-color: var(--gold); transform: scale(1.03); box-shadow: var(--shadow-up); }
+/* garis emas menyapu di tepi bawah kartu saat disorot */
+.news-card::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 0.25rem;
+  background-color: var(--gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s;
+}
+.news-card:hover::after, .news-card:focus-visible::after { transform: scaleX(1); }
 .news-card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background-color: var(--bg); }
-.news-card .body { padding: 1rem 1.1rem 1.3rem; }
-.news-card h3 { margin: 0.4rem 0; font-size: 1.5rem; }
+.news-card .body { padding: 1rem 1.2rem 1.4rem; }
+.news-card h3 { margin: 0.4rem 0; font-size: 1.55rem; transition: color 0.2s; }
+.news-card:hover h3 { color: var(--green); }
 .news-card .desc {
   font-size: 0.95rem;
   color: var(--muted);
@@ -399,8 +436,22 @@ section h2 {
 }
 .meta { display: flex; gap: 0.6rem; font-size: 0.9rem; color: var(--muted); }
 .kind { font-weight: 600; color: var(--green); }
+/* Label jenis (Berita/Vlog/Dokumentasi) berbentuk lencana; warnanya per jenis lewat atribut data-jenis (dibuat berita-live.js) */
+.news-card .kind, .video-card .kind, .head-meta .kind, .feature .kind {
+  padding: 0.1rem 0.65rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: var(--green);
+  border-bottom: 0.15rem solid var(--gold);
+  border-radius: 0.25rem;
+}
+.kind[data-jenis="Vlog"] { background-color: var(--red); }
+.kind[data-jenis="Dokumentasi"] { color: var(--ink); background-color: var(--gold); border-bottom-color: var(--green); }
+/* di kartu berita label menempel di pojok kiri atas gambar */
+.news-card .meta .kind { position: absolute; top: 0.75rem; left: 0.75rem; z-index: 1; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); }
 
-/* ===== Halaman isi berita (berita/berita-N.html) ===== */
+/* ===== Halaman isi berita (berita/baca.html) ===== */
 .page-head .meta { margin-bottom: 0.6rem; font-size: 0.95rem; }
 /* Halaman isi: tanggal (chip) tepat di bawah judul; jenis berita (Berita/Vlog/...) di kirinya.
    Ringkasan di bawahnya diberi jarak sedikit supaya tidak menempel. */
@@ -415,8 +466,11 @@ section h2 {
   object-fit: cover;
   margin-top: 1.5rem;
   background-color: var(--card);
-  border-radius: 0.4rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
 }
+/* teks isi sedikit lebih besar dan lega supaya enak dibaca panjang */
+.article-main .detail p { max-width: 42rem; font-size: 1.125rem; line-height: 1.75; }
 .gallery {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
@@ -424,7 +478,25 @@ section h2 {
   max-width: 56rem;
   margin: 1rem 0 0 1.4rem;
 }
-.gallery img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background-color: var(--card); border-radius: 0.4rem; }
+.gallery a { position: relative; display: block; overflow: hidden; border-radius: 0.6rem; box-shadow: var(--shadow); }
+.gallery img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background-color: var(--card); transition: transform 0.4s; }
+.gallery a:hover img { transform: scale(1.05); }
+/* ikon kaca pembesar: tanda bahwa foto bisa dibuka (selalu tampil di layar sentuh, yang tidak punya hover) */
+.gallery a::after {
+  content: '';
+  position: absolute;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  width: 2.2rem;
+  height: 2.2rem;
+  background: rgba(6, 40, 10, 0.72) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cline x1='21' y1='21' x2='16.5' y2='16.5'/%3E%3Cline x1='11' y1='8' x2='11' y2='14'/%3E%3Cline x1='8' y1='11' x2='14' y2='11'/%3E%3C/svg%3E") center / 55% no-repeat;
+  border-radius: 50%;
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 0.25s, transform 0.25s;
+}
+.gallery a:hover::after, .gallery a:focus-visible::after { opacity: 1; transform: none; }
+@media (hover: none) { .gallery a::after { opacity: 1; transform: none; } }
 .gallery figcaption { margin-top: 0.4rem; font-size: 0.9rem; color: var(--muted); }
 .watch { display: flex; flex-wrap: wrap; gap: 0.8rem; margin: 1rem 0 0 1.4rem; }
 .watch .btn { display: inline-flex; align-items: center; gap: 0.5rem; }
@@ -465,7 +537,7 @@ section h2 {
   .news-actions .btn.cta { gap: 0.45rem; padding: 0.6rem 0.9rem; font-size: 1rem; }
 }
 
-/* ===== Halaman berita selengkapnya (berita/semua-berita, galeri-video, galeri-instagram) ===== */
+/* ===== Halaman berita selengkapnya (portal/semua-berita, galeri-video, galeri-instagram) ===== */
 .hub-action { margin: 1.2rem 0 0 1.4rem; }
 
 /* Tab untuk pindah antar tiga halaman. Menempel di bawah navbar saat di-scroll. */
@@ -599,14 +671,14 @@ section h2 {
 
 /* ===== Program: kartu lebar tersusun ke bawah, gambar di kiri memudar ke isi ===== */
 /* Yang tampil maksimal 3 kartu. Tinggi kotak diatur script.js (lihat "Program" di sana);
-   kalau kartunya lebih dari 3, sisanya digulir di dalam kotak. Padding kecil menyisakan
-   ruang supaya garis fokus keyboard di kartu paling atas/pinggir tidak terpotong. */
+   kalau kartunya lebih dari 3, sisanya digulir di dalam kotak. Padding menyisakan ruang
+   supaya kartu yang membesar saat disorot dan garis fokus keyboard tidak terpotong. */
 .program-list {
   display: grid;
   align-content: start;
   gap: 1.5rem;
-  margin: calc(3rem - 0.4rem) -0.4rem 0;
-  padding: 0.4rem;
+  margin: calc(3rem - 0.8rem) -0.8rem 0;
+  padding: 0.8rem;
   overflow-y: auto;
   scroll-snap-type: y proximity;
   scroll-padding-block: 0.4rem;
@@ -620,17 +692,22 @@ section h2 {
   min-height: 15rem;
   background-color: var(--card);
   border: 1px solid var(--line);
-  border-radius: 0.4rem;
+  border-radius: var(--radius);
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(20, 38, 26, 0.08);
-  transition: border-color 0.2s;
+  box-shadow: var(--shadow);
+  transition: border-color 0.2s, transform 0.25s ease, box-shadow 0.25s;
 }
-.program-card:hover { border-color: var(--gold); }
-/* Latar hijau tampil kalau gambar belum ada */
+.program-card:hover { z-index: 1; border-color: var(--gold); transform: scale(1.015); box-shadow: var(--shadow-up); }
+/* Latar kotak gambar sengaja putih (sama dengan kartu). Kalau latarnya hijau, warna hijau itu mengintip
+   sebagai garis tipis di tepi gambar saat lebarnya jatuh di setengah piksel. Latar hijau hanya dipakai
+   kalau gambar belum ada (kotaknya kosong). margin-right -1px menimpa 1px ke area teks untuk menutup celah. */
 .program-img {
   position: relative;
-  background: linear-gradient(135deg, var(--green-dark), var(--olive));
+  overflow: hidden;
+  margin-right: -1px;
+  background-color: var(--card);
 }
+.program-img:empty { background: linear-gradient(135deg, var(--green-dark), var(--olive)); }
 .program-img img {
   position: absolute;
   inset: 0;
@@ -643,7 +720,7 @@ section h2 {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to right, transparent 40%, var(--card));
+  background: linear-gradient(to right, transparent 40%, var(--card) 97%);
 }
 .program-body {
   display: flex;
@@ -725,7 +802,7 @@ section h2 {
   width: 100%;
   height: 18rem;
   border: 1px solid var(--line);
-  border-radius: 0.4rem;
+  border-radius: var(--radius);
   filter: grayscale(0.35) contrast(0.95);
 }
 
@@ -733,8 +810,9 @@ section h2 {
   padding: 1.8rem;
   background-color: var(--card);
   border: 1px solid var(--line);
-  border-radius: 0.4rem;
-  box-shadow: 0 1px 3px rgba(20, 38, 26, 0.08);
+  border-top: 0.25rem solid var(--green);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
 }
 #contact-form label { display: block; margin-bottom: 0.3rem; font-size: 0.95rem; font-weight: 500; }
 #contact-form input,
@@ -756,7 +834,7 @@ section h2 {
 .form-status.ok { color: var(--green-dark); background-color: rgba(26, 122, 31, 0.12); }
 .form-status.err { color: #8f1b1b; background-color: rgba(214, 40, 40, 0.1); }
 #contact-form input:focus,
-#contact-form textarea:focus { outline: 0; border-color: var(--green); }
+#contact-form textarea:focus { outline: 0; border-color: var(--green); box-shadow: 0 0 0 3px rgba(26, 122, 31, 0.16); }
 
 /* ===== Footer ===== */
 footer {
@@ -834,7 +912,7 @@ footer .credit { margin-top: 0.8rem; font-size: 0.85rem; opacity: 0.8; }
 
   /* Program: tetap gambar di kiri tapi lebih ramping, teks lebih kecil, supaya 3 kartu muat di layar HP */
   .program-card { grid-template-columns: 8rem minmax(0, 1fr); min-height: 9.5rem; }
-  .program-img::after { background: linear-gradient(to right, transparent 60%, var(--card)); }
+  .program-img::after { background: linear-gradient(to right, transparent 60%, var(--card) 97%); }
   .program-body { padding: 1rem 1rem 1rem 0.4rem; }
   .program-body h3 { font-size: 1.6rem; }
   .program-body > p {
@@ -848,6 +926,61 @@ footer .credit { margin-top: 0.8rem; font-size: 0.85rem; opacity: 0.8; }
   .program-foot { margin-top: 0.7rem; }
   .program-foot .when { padding: 0.15rem 0.5rem; font-size: 0.85rem; }
 }
+
+/* ===== Animasi masuk (pop) =====
+   Hero: urutan sekali saat halaman dibuka (CSS murni, tanpa JavaScript).
+   Kartu berita, kartu program, baris divisi, dan logo Tentang kami: muncul sekali saat pertama terlihat
+   (kelas .pop dipasang script.js, lihat "Animasi masuk" di sana). Fill "backwards" supaya efek hover tetap jalan setelahnya. */
+@keyframes pop-in {
+  from { opacity: 0; transform: translateY(1.2rem) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-text > * { animation: pop-in 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.1) backwards; }
+  .hero-text > :nth-child(1) { animation-delay: 0.05s; }
+  .hero-text > :nth-child(2) { animation-delay: 0.2s; }
+  .hero-text > :nth-child(3) { animation-delay: 0.35s; }
+  .hero-text > :nth-child(4) { animation-delay: 0.5s; }
+}
+.pop { opacity: 0; transform: var(--from, translateY(1.4rem)); }
+.pop.in {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.5s ease-out var(--d, 0s), transform 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.15) var(--d, 0s);
+}
+.about-img .pop, #news-track .pop { --from: translateY(1.2rem) scale(0.95); }
+
+/* Slogan: kotak "Berita" dan "Cerita" tersapu dari kiri ke kanan saat terlihat (kelas .sweep/.in dipasang script.js) */
+.slogan.sweep span { clip-path: inset(0 100% 0 0); transition: clip-path 0.5s cubic-bezier(0.7, 0, 0.2, 1); }
+.slogan.sweep.in span { clip-path: inset(0); }
+.slogan.sweep.in span:last-of-type { transition-delay: 0.35s; }
+
+/* Batang merah di judul bagian: memanjang ke bawah sekali saat judulnya terlihat (kelas .grow/.in dipasang script.js) */
+section h2.grow {
+  border-left-color: transparent;
+  background: linear-gradient(var(--red), var(--red)) no-repeat 0 0 / 0.4rem 0;
+  background-origin: border-box;
+  background-clip: border-box;
+  transition: background-size 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+section h2.grow.in { background-size: 0.4rem 100%; }
+
+/* Titik merah di label hero berkedip pelan seperti penanda siaran */
+@keyframes live {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0.25rem rgba(214, 40, 40, 0.3); }
+  50% { opacity: 0.45; box-shadow: 0 0 0 0.5rem rgba(214, 40, 40, 0); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .tag::before { animation: live 2s ease-in-out infinite; }
+  /* Pindah halaman: memudar halus (Chrome/Edge; browser lain pindah seperti biasa) */
+  @view-transition { navigation: auto; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.25s; }
+}
+
+/* Saat diseret dengan mouse (script.js): tanpa snap dan gulir halus supaya mengikuti kursor, dan kartu tidak ikut bereaksi */
+.news-track.dragging, .program-list.dragging { scroll-snap-type: none; scroll-behavior: auto; user-select: none; }
+.dragging, .dragging * { cursor: grabbing !important; }
+.dragging a { pointer-events: none; }
 
 @media (prefers-reduced-motion: reduce) {
   html, .news-track { scroll-behavior: auto; }
