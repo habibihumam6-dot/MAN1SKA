@@ -19,8 +19,9 @@
   border: 0;
   border-radius: 0.4rem;
   cursor: pointer;
-  transition: color 0.2s, background-color 0.2s;
+  transition: color 0.2s, background-color 0.2s, transform 0.15s;
 }
+.nav-search:active { transform: scale(0.88); } /* terasa "ditekan" saat diklik */
 .nav-search svg { width: 1.35rem; height: 1.35rem; }
 .nav-search:hover,
 .nav-search[aria-expanded="true"] { color: var(--green); }
@@ -31,8 +32,16 @@
   .nav-search { margin-left: auto; margin-right: 0.4rem; }
 }
 
-/* Latar redup di belakang panel, klik untuk menutup */
-.search-backdrop { position: absolute; top: 100%; left: 0; width: 100%; height: 100vh; background-color: rgba(6, 40, 10, 0.4); }
+/* Latar redup di belakang panel, klik untuk menutup. Memudar masuk saat panel dibuka. */
+.search-backdrop {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(6, 40, 10, 0.4);
+  animation: search-fade-in 0.25s ease-out;
+}
 
 /* Panel berupa kartu putih kecil yang melayang di tengah, bukan lagi garis putih selebar halaman.
    Sisi kiri-kanannya cuma latar redup, jadi perhatian tertuju ke kotak cari. */
@@ -47,6 +56,8 @@
   border-radius: 0.9rem;
   box-shadow: 0 16px 36px rgba(6, 40, 10, 0.28);
   transform: translateX(-50%);
+  transform-origin: 50% 0;
+  animation: search-panel-in 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2); /* jatuh dari navbar, memantul sedikit, lalu diam */
 }
 .search-backdrop[hidden],
 .search-panel[hidden] { display: none; }
@@ -98,3 +109,27 @@
   color: var(--muted);
 }
 .search-item mark { padding: 0 0.1rem; color: inherit; background-color: rgba(242, 184, 36, 0.5); border-radius: 0.15rem; }
+
+/* ----- Animasi buka dan tutup panel -----
+   Animasi masuk jalan sendiri tiap panel ditampilkan. Animasi keluar dipicu search.js lewat kelas .is-closing,
+   lalu panel disembunyikan setelahnya. Mau lebih cepat/lambat? Ubah angka 0.4s (masuk) dan 0.18s (keluar);
+   kalau angka keluar diubah, ubah juga 200 (milidetik) di fungsi close() pada search.js.
+   Mau jatuhnya lebih jauh? Ubah -1.2rem di search-panel-in. Mau tanpa pantulan? Ganti 1.2 di cubic-bezier jadi 1. */
+@keyframes search-panel-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(-1.2rem) scale(0.95); }
+  to { opacity: 1; transform: translateX(-50%); }
+}
+@keyframes search-panel-out {
+  from { opacity: 1; transform: translateX(-50%); }
+  to { opacity: 0; transform: translateX(-50%) translateY(-0.6rem) scale(0.98); }
+}
+@keyframes search-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes search-fade-out { from { opacity: 1; } to { opacity: 0; } }
+.search-panel.is-closing { animation: search-panel-out 0.18s ease-in forwards; pointer-events: none; }
+.search-backdrop.is-closing { animation: search-fade-out 0.18s ease-in forwards; pointer-events: none; }
+
+/* Pengunjung yang mematikan animasi di perangkatnya: panel langsung muncul dan hilang tanpa gerak */
+@media (prefers-reduced-motion: reduce) {
+  .search-panel, .search-backdrop { animation: none !important; }
+  .nav-search { transition: none; }
+}
